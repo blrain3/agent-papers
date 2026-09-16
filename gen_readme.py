@@ -1,0 +1,75 @@
+#!/usr/bin/env python3
+# usage:
+# ./gen_readme.py > README.md
+#
+# requires pip install pyyaml
+# Vendored from facundoolano/software-papers (MIT License, Copyright (c) 2022 Facundo Olano).
+# Kept as-is so this list stays byte-compatible with that project's generator pipeline.
+
+import yaml
+
+
+def load_papers():
+    def markdown(paper, bold=False):
+        entry = f'{paper["title"]}. [{paper["author"]} ({paper["year"]})]({paper["link"]}).'
+        if bold:
+            entry = f'**{entry}**'
+
+        entry += '\n'
+
+        # if the title ends with ? don't append a period
+        return entry.replace('?.', '?')
+
+    with open('papers.yml') as file_:
+        papers = yaml.safe_load(file_)
+
+    for paper in papers:
+        paper['markdown'] = markdown(paper, bold=True)
+        for related in paper.setdefault('related', []):
+            related['markdown'] = markdown(related, bold=False)
+
+        paper['related'].sort(key=lambda p: p['year'])
+
+    return papers
+
+
+def render_readme(papers):
+    with open('README.md.template') as template:
+        readme = template.read()
+
+    # Full nested list
+    papers_full = ''
+    for paper in papers:
+        papers_full += '1. ' + paper['markdown']
+        papers_full += '    \\\n'
+        topics = '; '.join(paper['topics'])
+        papers_full += f"    <sub>{topics}</sub>\n"
+        for related in paper['related']:
+            papers_full += '    * ' + related['markdown']
+        papers_full += '\n'
+    readme = readme.replace('{{ PAPERS_FULL }}', papers_full)
+
+    # top-level only
+    papers_top = ''
+    for paper in papers:
+        papers_top += '1. ' + paper['markdown']
+    readme = readme.replace('{{ PAPERS_TOC }}', papers_top)
+
+    # chronological flat list
+    all_papers = []
+    for paper in papers:
+        all_papers.append(paper)
+        all_papers += paper['related']
+
+    papers_sorted = ''
+    for paper in sorted(all_papers, key=lambda p: p['year']):
+        papers_sorted += '1. ' + paper['markdown']
+    readme = readme.replace('{{ PAPERS_SORTED }}', papers_sorted)
+
+    return readme
+
+
+if __name__ == '__main__':
+    papers = load_papers()
+    output = render_readme(papers)
+    print(output)

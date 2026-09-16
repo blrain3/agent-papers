@@ -1,0 +1,97 @@
+# Papers on LLM Agents and Agent Systems
+
+A curated list of papers about LLM agents and the systems built around them: reasoning and
+acting, tool use, memory, retrieval, multi-agent orchestration, coding and web agents, and the
+evaluation and training work that decides whether any of it actually holds up.
+
+Every entry's title, authors, year and link were taken from the arXiv API rather than typed by
+hand, so a misremembered paper shows up as a mismatch instead of becoming a wrong citation.
+See [sources](#sources) and [selection criteria](#selection-criteria) below.
+
+<br/>
+
+<details open>
+<summary>List of papers by topic</summary>
+<br/>
+
+{{ PAPERS_FULL }}
+
+</details>
+
+<br/>
+
+<details>
+<summary>Top-level papers only</summary>
+<br/>
+
+{{ PAPERS_TOC }}
+
+</details>
+
+<br/>
+
+<details>
+<summary>All papers in chronological order </summary>
+<br/>
+
+{{ PAPERS_SORTED }}
+
+</details>
+
+## How to read this
+
+The top-level papers are the entry points; the nested items are follow-ups, alternatives, or
+papers that disagree. Suggested reading order:
+
+1. **Reasoning first** — Chain-of-Thought, then its refinements. Everything about agents assumes
+   the model can reason in steps; know what that actually claims before building on it.
+2. **Then the acting loop** — ReAct is the hinge of the whole field: reasoning interleaved with
+   tool calls. Reflexion and Self-Refine add self-correction; Let's Verify Step by Step asks
+   whether the model can tell good reasoning from bad.
+3. **Then tools and memory** — Toolformer and friends cover calling APIs; MemGPT and Generative
+   Agents cover keeping state across turns. These two are what separate a chatbot from an agent.
+4. **Then architecture and surveys** — CoALA is the cleanest attempt to say what an agent *is*.
+   Read it after the concrete papers, not before.
+5. **Then the evaluation papers** — SWE-bench, WebArena, AgentBench, and above all *AI Agents
+   That Matter*, which argues most agent benchmarks measure the wrong thing. Read this before
+   believing any capability claim, including the ones earlier in the list.
+6. **Multi-agent last** — AutoGen, MetaGPT, CAMEL, ChatDev. Then read *Why Do Multi-Agent LLM
+   Systems Fail?*, which catalogues how these systems break in practice.
+
+## Sources
+
+This list was assembled from:
+
+* [Papers We Love](https://paperswelove.org/)
+* [Agent_Memory_Techniques](https://github.com/NirDiamant/Agent_Memory_Techniques) — 30 runnable
+  notebooks and a memory-paper map
+* [Agent-Memory-Paper-List](https://github.com/Shichun-Liu/Agent-Memory-Paper-List) — companion
+  list to *Memory in the Age of AI Agents: A Survey*
+* [kyegomez/ai-reading-list](https://github.com/kyegomez/ai-reading-list) — Transformer-era
+  through 2025 frontier work
+* [software-papers](https://github.com/facundoolano/software-papers) — the format this list
+  reuses, and the reason the layering below is deliberate
+
+## Selection criteria
+
+Adapted from software-papers, with two changes for the agent field.
+
+1. **The list should stay short.** No more than 30 top-level papers, each with a few related
+   items. The goal is a list you can read start to finish, not a complete bibliography.
+2. **One top-level paper per major topic.** Follow-ups, alternatives and rebuttals go in the
+   nested list beneath it. Where two papers make the same point, the older or more precise one
+   wins.
+3. **Prefer papers that changed practice.** Agent research has a high ratio of surveys to
+   results; a paper that introduced a mechanism people now build on beats a paper that
+   taxonomises mechanisms.
+4. **Freely available only.** Every link here resolves without a subscription. This is why the
+   list is arXiv-heavy; notable exceptions are living benchmarks whose canonical home is a
+   project site rather than a PDF.
+5. **Include the negative results.** Benchmarks that show agents failing, and papers arguing the
+   evaluation is broken, are load-bearing. A list of only capability papers is a marketing
+   document.
+6. **Skip the surveys you will not finish.** Long taxonomies of "LLM agent architectures" add
+   vocabulary without adding capability. The two included here earn their place.
+7. **Metadata is fetched, never typed.** Titles, author lists, years and links come from the
+   arXiv API. This is the discipline that keeps a curated list from silently accumulating
+   misattributions.
