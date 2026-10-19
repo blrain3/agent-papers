@@ -617,6 +617,9 @@ class ReproducibilityTests(unittest.TestCase):
             second = out.read_bytes()
         self.assertEqual(first, second, '两次生成必须字节相同')
         self.assertEqual(first.count(b'- title:'), 48)
+        self.assertEqual(
+            first, (ROOT / 'papers.yml').read_bytes(),
+            '离线重新生成必须与 master papers.yml 字节一致')
 
 
 if __name__ == '__main__':

@@ -77,3 +77,9 @@ git checkout master
 （或 `git reset --hard a1f027a94797803209055cbcc727c6a43bb9ce34` 仅回退本分支提交，不动 `master`。）
 
 工作树中若仍有未提交杂项（如 `__pycache__/`、`.venv-tmp/`），可手动删除；它们未纳入提交。
+
+## 返工记录（本轮）
+
+- 偏离原因：上一轮生成的 `papers.yml` 对全部字符串整体加引号（`topics: ["Reasoning", ...]`、`author: "Wei et al"` 等），且 `README.md` / `README.md.template` 追加了“Maintenance”章节，导致重新生成产物与 `master` 字节不一致，违反验收条款“`papers.yml` 与 `README.md` 只能由重新生成产生且必须与 master 内容字节一致”。
+- 恢复范围：`git checkout master -- README.md README.md.template papers.yml` 将三产物恢复为 `master` 字节；`build_papers.py` 的 YAML 序列化改回最小引号（仅对确需引号的字符串加引号，含 `null` 等隐式 YAML 值与 `': '`/`'#'`/换行等 YAML-significant 内容），`topics` 保持内联风格，头部注释恢复为 `master` 原文的 `Regenerate with: ...` 一行；`README.md.template` 不含 Maintenance 章节，使 `gen_readme`/`safe_readme` 流水线产出与 `master` 字节一致的 `README.md`；上一轮新增的 Maintenance 使用说明已移入本文件末尾本节，未出现在 `README.md` 或 `README.md.template`；`tests/` 中可重现用例的期望改为“与 master 字节一致”。除 `README.md`/`README.md.template`/`papers.yml` 外，未回退上一轮修复（`gen_readme.py` 与 `master` 逐字节一致，`git diff master -- gen_readme.py` 为空）。
+- 验证结果：`.venv-tmp/bin/python -m unittest discover -s tests` 全绿（41 条）；离线重跑 `build_papers.py` 两次均与 `master` 的 `papers.yml`、`README.md` 字节一致（`hashlib` 比较）；未 push、未联网；已按返工原因提交一个 commit。
