@@ -1,49 +1,78 @@
 #!/usr/bin/env python3
-# checks that all links in the paper yaml are reachable
-# requires pip install pyyaml requests
-# Vendored from facundoolano/software-papers (MIT License, Copyright (c) 2022 Facundo Olano).
-# Kept as-is so this list stays byte-compatible with that project's generator pipeline.
-
+# Local fork of facundoolano/software-papers (MIT, Copyright (c) 2022 Facundo Olano).
+# Modified locally: TLS, timeouts, bounded retries, and explicit verification states.
+"""Check reachability: PASS=0, confirmed absence FAIL=1, UNVERIFIED=2."""
+import time
+from pathlib import Path
 
 import requests
-import urllib3
 import yaml
 
-# the parnas1972 paper is throwing cert errors and I can't find another link for it.
-# so requesting with verify=False and disabling warnings for now
-urllib3.disable_warnings()
+HEADERS = {'User-Agent': 'agent-papers-link-check/1.0'}
+TIMEOUT = 15
+ATTEMPTS = 3
 
 
-HEADERS = {'User-Agent': 'My User Agent 1.0'}
+def check_link(url):
+    observations = []
+    for attempt in range(ATTEMPTS):
+        if attempt:
+            time.sleep(attempt)
+        try:
+            with requests.head(url, headers=HEADERS, verify=True, timeout=TIMEOUT,
+                               allow_redirects=True) as response:
+                status = response.status_code
+            if status in (405, 501):
+                with requests.get(url, headers=HEADERS, verify=True, timeout=TIMEOUT,
+                                  allow_redirects=True, stream=True) as response:
+                    status = response.status_code
+        except requests.RequestException as exc:
+            observations.append(type(exc).__name__)
+            continue
+        if status in (200, 204, 206):
+            return 0, f'PASS HTTP {status}'
+        observations.append(status)
+    if all(status == observations[0] for status in observations) and observations[0] in (404, 410):
+        return 1, f'FAIL confirmed HTTP {observations[0]} ({ATTEMPTS} attempts)'
+    return 2, f'UNVERIFIED {observations}'
 
-with open('papers.yml') as file_:
-    papers = yaml.safe_load(file_)
 
-for paper in papers:
-    papers += paper.get('related', [])
+def main():
+    try:
+        with Path(__file__).with_name('papers.yml').open(encoding='utf-8') as stream:
+            papers = yaml.safe_load(stream)
+        if not isinstance(papers, list):
+            raise ValueError('YAML root must be a list')
+        if not papers:
+            print('UNVERIFIED no papers checked')
+            return 2
+        all_papers = []
+        for index, paper in enumerate(papers):
+            if not isinstance(paper, dict):
+                raise ValueError(f'paper {index} must be a mapping')
+            related = paper.get('related', [])
+            if not isinstance(related, list):
+                raise ValueError(f'paper {index} related must be a list')
+            all_papers.append(paper)
+            all_papers.extend(related)
+        links = []
+        for index, paper in enumerate(all_papers):
+            if not isinstance(paper, dict):
+                raise ValueError(f'entry {index} must be a mapping')
+            link = paper.get('link')
+            if not isinstance(link, str) or not link.strip():
+                raise ValueError(f'entry {index} link must be a nonempty string')
+            links.append(link)
+    except (OSError, yaml.YAMLError, KeyError, TypeError, ValueError) as exc:
+        print(f'UNVERIFIED input: {exc}')
+        return 2
+    codes = []
+    for link in links:
+        code, message = check_link(link)
+        codes.append(code)
+        print(f'{message}: {link}')
+    return 1 if 1 in codes else (2 if 2 in codes else 0)
 
 
-exit_code = 0
-for paper in papers:
-    ref = paper['author'].replace(',', '').split(' ')[0] + str(paper['year'])
-    print(f'{ref}...', end='', flush=True)
-
-    if '.acm.org/' in paper['link']:
-        # the acm library (which has the majority of the paper links)
-        # is now denying requests without javascript enabled
-        # I'm skipping them since it's better to assume they work and check the rest
-        # than removing this script or trying to find alternative sources for all the papers
-        print('skipping ACM')
-        continue
-
-    response = requests.head(paper['link'], headers=HEADERS, verify=False)
-    if response.status_code == 405:
-        response = requests.get(paper['link'], headers=HEADERS, verify=False)
-    if response.ok:
-        print('ok')
-    else:
-        exit_code = 1
-        print(' ERROR')
-        print(f'    failed fetching {paper["link"]}')
-
-exit(exit_code)
+if __name__ == '__main__':
+    raise SystemExit(main())
