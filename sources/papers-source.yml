@@ -1,0 +1,163 @@
+# 统一人工选文源（48 篇）
+#
+# 本文件是 build_papers.py 与 verify_papers.py 的唯一选文来源，替代两处
+# 曾经硬编码的选文清单（build_papers.py 的 STRUCTURE 与 verify_papers.py 的
+# CANDICATES）。每篇包含 id、expected_title（规范标题；已知 LaTeX/标点/前缀
+# 差异由 paper_validation.TITLE_ALIASES 的逐 ID 显式表处理）、topics（仅主线
+# 条目）与 related 顺序（仅主线条目）。
+#
+# 条目顺序与 verify_papers.py 曾使用的 CANDICATES 顺序一致（逐条 top-level 及其
+# related），因此缓存顺序、生成顺序与已有 papers.yml / verified-metadata.json 保持
+# 字节一致。主线 13 篇（带 topics/related）+ 关联 35 篇（不带）= 48 篇。
+#
+# 维护规则：增减条目或改动分组必须同步更新 papers.yml（经 build_papers.py 重新
+# 生成），并重新核验 13/35/48 计数与分组一致性。本文件由人工维护，不自动
+# 从网络导入。
+
+papers:
+  # 1. 主线：Chain-of-Thought
+  - id: "2201.11903"
+    expected_title: "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"
+    topics: ["Reasoning", "Prompting"]
+    related: ["2203.11171", "2205.10625", "2305.10601"]
+  - id: "2203.11171"
+    expected_title: "Self-Consistency Improves Chain of Thought Reasoning in Language Models"
+  - id: "2205.10625"
+    expected_title: "Least-to-Most Prompting Enables Complex Reasoning in Large Language Models"
+  - id: "2305.10601"
+    expected_title: "Tree of Thoughts: Deliberate Problem Solving with Large Language Models"
+
+  # 2. 主线：ReAct
+  - id: "2210.03629"
+    expected_title: "ReAct: Synergizing Reasoning and Acting in Language Models"
+    topics: ["Agents", "Reasoning and Acting"]
+    related: ["2303.11366", "2303.17651", "2305.20050", "2406.02818"]
+  - id: "2303.11366"
+    expected_title: "Reflexion: Language Agents with Verbal Reinforcement Learning"
+  - id: "2303.17651"
+    expected_title: "Self-Refine: Iterative Refinement with Self-Feedback"
+  - id: "2305.20050"
+    expected_title: "Let's Verify Step by Step"
+  - id: "2406.02818"
+    expected_title: "Chain of Agents: Large Language Models Collaborating on Long-Context Tasks"
+
+  # 3. 主线：Toolformer
+  - id: "2302.04761"
+    expected_title: "Toolformer: Language Models Can Teach Themselves to Use Tools"
+    topics: ["Tool Use", "Function Calling"]
+    related: ["2307.16789", "2305.15334", "2402.01030"]
+  - id: "2307.16789"
+    expected_title: "ToolLLM: Facilitating Large Language Models to Master 16000+ Real-world APIs"
+  - id: "2305.15334"
+    expected_title: "Gorilla: Large Language Model Connected with Massive APIs"
+  - id: "2402.01030"
+    expected_title: "Executable Code Actions Elicit Better LLM Agents"
+
+  # 4. 主线：MemGPT
+  - id: "2310.08560"
+    expected_title: "MemGPT: Towards LLMs as Operating Systems"
+    topics: ["Agent Memory", "Long-Term Memory"]
+    related: ["2304.03442", "2502.12110", "2504.19413", "2410.10813"]
+  - id: "2304.03442"
+    expected_title: "Generative Agents: Interactive Simulacra of Human Behavior"
+  - id: "2502.12110"
+    expected_title: "A-MEM: Agentic Memory for LLM Agents"
+  - id: "2504.19413"
+    expected_title: "Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory"
+  - id: "2410.10813"
+    expected_title: "LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory"
+
+  # 5. 主线：RAG
+  - id: "2005.11401"
+    expected_title: "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"
+    topics: ["Retrieval", "Knowledge Grounding"]
+    related: ["2310.11511", "2307.03172"]
+  - id: "2310.11511"
+    expected_title: "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection"
+  - id: "2307.03172"
+    expected_title: "Lost in the Middle: How Language Models Use Long Contexts"
+
+  # 6. 主线：CoALA / 架构与调研
+  - id: "2309.02427"
+    expected_title: "Cognitive Architectures for Language Agents"
+    topics: ["Agent Architecture", "Survey"]
+    related: ["2309.07864", "2308.11432", "2504.16736"]
+  - id: "2309.07864"
+    expected_title: "The Rise and Potential of Large Language Model Based Agents: A Survey"
+  - id: "2308.11432"
+    expected_title: "A Survey on Large Language Model based Autonomous Agents"
+  - id: "2504.16736"
+    expected_title: "A Survey of AI Agent Protocols"
+
+  # 7. 主线：SWE-bench
+  - id: "2310.06770"
+    expected_title: "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?"
+    topics: ["Coding Agents", "Benchmarks"]
+    related: ["2405.15793", "2407.16741"]
+  - id: "2405.15793"
+    expected_title: "SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering"
+  - id: "2407.16741"
+    expected_title: "OpenHands: An Open Platform for AI Software Developers as Generalist Agents"
+
+  # 8. 主线：WebArena
+  - id: "2307.13854"
+    expected_title: "WebArena: A Realistic Web Environment for Building Autonomous Agents"
+    topics: ["Web Agents", "Environments"]
+    related: ["2404.07972"]
+  - id: "2404.07972"
+    expected_title: "OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments"
+
+  # 9. 主线：AutoGen
+  - id: "2308.08155"
+    expected_title: "AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation"
+    topics: ["Multi-Agent", "Orchestration"]
+    related: ["2308.00352", "2303.17760", "2307.07924", "2503.13657"]
+  - id: "2308.00352"
+    expected_title: "MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework"
+  - id: "2303.17760"
+    expected_title: "CAMEL: Communicative Agents for \"Mind\" Exploration of Large Language Model Society"
+  - id: "2307.07924"
+    expected_title: "Communicative Agents for Software Development"
+  - id: "2503.13657"
+    expected_title: "Why Do Multi-Agent LLM Systems Fail?"
+
+  # 10. 主线：AI Agents That Matter
+  - id: "2407.01502"
+    expected_title: "AI Agents That Matter"
+    topics: ["Evaluation", "Rigor"]
+    related: ["2308.03688", "2406.12045", "2410.10934", "2506.06941"]
+  - id: "2308.03688"
+    expected_title: "AgentBench: Evaluating LLMs as Agents"
+  - id: "2406.12045"
+    expected_title: "tau-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains"
+  - id: "2410.10934"
+    expected_title: "Agent-as-a-Judge: Evaluate Agents with Agents"
+  - id: "2506.06941"
+    expected_title: "The Illusion of Thinking: Understanding the Strengths and Limitations of Reasoning Models"
+
+  # 11. 主线：InstructGPT / 对齐
+  - id: "2203.02155"
+    expected_title: "Training language models to follow instructions with human feedback"
+    topics: ["Alignment", "Training"]
+    related: ["2305.18290", "2212.08073", "2501.12948"]
+  - id: "2305.18290"
+    expected_title: "Direct Preference Optimization: Your Language Model is Secretly a Reward Model"
+  - id: "2212.08073"
+    expected_title: "Constitutional AI: Harmlessness from AI Feedback"
+  - id: "2501.12948"
+    expected_title: "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning"
+
+  # 12. 主线：测试时计算
+  - id: "2408.03314"
+    expected_title: "Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters"
+    topics: ["Test-Time Compute", "Scaling"]
+    related: ["2503.14499", "2512.08296"]
+  - id: "2503.14499"
+    expected_title: "Measuring AI Ability to Complete Long Software Tasks"
+  - id: "2512.08296"
+    expected_title: "Towards a Science of Scaling Agent Systems"
+
+  # 13. 主线：Voyager
+  - id: "2305.16291"
+    expected_title: "Voyager: An Open-Ended Embodied Agent with Large Language Models"
+    topics: ["Open-Ended Agents", "Lifelong Learning"]
